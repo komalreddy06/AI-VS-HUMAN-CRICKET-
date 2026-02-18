@@ -4,15 +4,15 @@
 ## Algorithms Implemented
 | Unit | Algorithm | Game Role |
 |------|-----------|-----------|
-| Unit I | **A\* Search** | Field placement optimization |
-| Unit II | **Minimax + Alpha-Beta Pruning** | AI bowler decisions |
-| Unit III | **Bayesian / MDP concepts** | Match strategy |
-| Unit IV | **Q-Learning** | AI adapts delivery mid-match |
+| REVIEW 1 | **A\* Search** | Field placement optimization |
+| REVIEW 2 | **Minimax + Alpha-Beta Pruning** | AI bowler decisions |
+| REVIEW 3 | **Bayesian / MDP concepts** | Match strategy |
+| REVIW 4 | **Q-Learning** | AI adapts delivery mid-match |
 
 ---
 ---
 
-## 🎮 How to Play
+##  How to Play
 1. **Select a delivery** (Yorker, Bouncer, Off Spin…)
 2. Field automatically repositions using **A\* Search**
 3. **Select your shot** (Drive, Pull, Sweep…)
@@ -21,7 +21,7 @@
 
 ---
 
-## 📊 Syllabus Coverage
+##  Syllabus Coverage
 - **State-space representation**: Field zones as nodes
 - **Informed search**: A\* with heuristic h(n) = uncovered run probability
 - **Game Tree**: 2-ply Minimax (bowler → batsman → outcome)
