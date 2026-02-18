@@ -1,5 +1,5 @@
-# 🏏 AI Cricket – Intelligence vs Instinct
-**Final Year Project | AI & Search Techniques**
+# 🏏 AI Cricket – Intelligence vs Human
+**2ND YEAR PROJECT | AI & Search Techniques**
 
 ## Algorithms Implemented
 | Unit | Algorithm | Game Role |
