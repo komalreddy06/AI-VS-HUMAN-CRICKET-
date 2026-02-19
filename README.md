@@ -4,10 +4,10 @@
 ## Algorithms Implemented
 | Unit | Algorithm | Game Role |
 |------|-----------|-----------|
-| REVIEW 1 | **A\* Search** | Field placement optimization |
-| REVIEW 2 | **Minimax + Alpha-Beta Pruning** | AI bowler decisions |
-| REVIEW 3 | **Bayesian / MDP concepts** | Match strategy |
-| REVIW 4 | **Q-Learning** | AI adapts delivery mid-match |
+| 1 | **A\* Search** | Field placement optimization |
+| 2 | **Minimax + Alpha-Beta Pruning** | AI bowler decisions |
+| 3 | **Bayesian / MDP concepts** | Match strategy |
+| 4 | **Q-Learning** | AI adapts delivery mid-match |
 
 ---
 ---
