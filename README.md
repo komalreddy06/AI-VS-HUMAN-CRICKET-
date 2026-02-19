@@ -6,7 +6,7 @@
 |------|-----------|-----------|
 | 1 | **A\* Search** | Field placement optimization |
 | 2 | **Minimax + Alpha-Beta Pruning** | AI bowler decisions |
-| 3 | **Bayesian / MDP concepts** | Match strategy |
+| 3 | **Bayesian | Works under uncertanity |
 | 4 | **Q-Learning** | AI adapts delivery mid-match |
 
 ---
