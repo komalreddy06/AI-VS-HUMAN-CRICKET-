@@ -2,7 +2,7 @@
 **2ND YEAR PROJECT | AI & Search Techniques**
 
 ## Algorithms Implemented
-| Unit | Algorithm | Game Role |
+| serial | Algorithm | Game Role |
 |------|-----------|-----------|
 | 1 | **A\* Search** | Field placement optimization |
 | 2 | **Minimax + Alpha-Beta Pruning** | AI bowler decisions |
