@@ -1,19 +1,14 @@
 """
-UNIT I - Informed Search: A* Algorithm for Cricket Field Placement
-=================================================================
-Models fielder positioning as a state-space search problem.
-- State     : current fielder configuration on the oval
-- Goal      : minimize the probability of ball reaching boundary
-- Heuristic : weighted coverage of high-risk shot zones
+A* Algorithm for Cricket Field Placement
+State     : current fielder configuration on the oval
+Goal      : minimize the probability of ball reaching boundary
+Heuristic : weighted coverage of high-risk shot zones
 """
-
 import math
 import random
 
-# ──────────────────────────────────────────────
 # CRICKET FIELD ZONES (angle ranges in degrees)
 # Centre = (0,0), boundary radius = 1.0
-# ──────────────────────────────────────────────
 ZONES = {
     "Fine Leg":       {"angle": (150, 190), "risk": 0.6},
     "Square Leg":     {"angle": (100, 150), "risk": 0.8},
@@ -179,9 +174,8 @@ def astar_field_placement(delivery_type, n_fielders=9):
     }
 
 
-# ──────────────────────────────────────────────
+
 # Quick test
-# ──────────────────────────────────────────────
 if __name__ == "__main__":
     for d in ["yorker", "bouncer", "off spin"]:
         result = astar_field_placement(d)
