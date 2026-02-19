@@ -1,19 +1,17 @@
 """
-UNIT I - Informed Search: A* Algorithm for Cricket Field Placement
+Informed Search: A* Algorithm for Cricket Field Placement
 =================================================================
-Models fielder positioning as a state-space search problem.
-- State     : current fielder configuration on the oval
-- Goal      : minimize the probability of ball reaching boundary
-- Heuristic : weighted coverage of high-risk shot zones
+State     : current fielder configuration on the oval
+Goal      : minimize the probability of ball reaching boundary
+Heuristic : weighted coverage of high-risk shot zones
 """
 
 import math
 import random
 
-# ──────────────────────────────────────────────
 # CRICKET FIELD ZONES (angle ranges in degrees)
 # Centre = (0,0), boundary radius = 1.0
-# ──────────────────────────────────────────────
+
 ZONES = {
     "Fine Leg":       {"angle": (150, 190), "risk": 0.6},
     "Square Leg":     {"angle": (100, 150), "risk": 0.8},
@@ -50,11 +48,6 @@ def zone_center(zone_name):
     return angle_to_xy(mid_angle, 0.65)
 
 def heuristic(fielder_positions, shot_probs):
-    """
-    A* Heuristic: estimate uncovered run-scoring probability.
-    Lower is better (we want to minimize this).
-    h(n) = sum of (zone_risk × shot_prob) for uncovered zones
-    """
     covered = set()
     for pos in fielder_positions:
         # A fielder covers the zone whose centre it's closest to
@@ -76,7 +69,7 @@ def heuristic(fielder_positions, shot_probs):
     return round(uncovered_risk, 4)
 
 def astar_field_placement(delivery_type, n_fielders=9):
-    """
+  """
     A* Search for optimal field placement given a delivery type.
 
     State   : frozenset of (zone_name) fielder assignments
@@ -85,7 +78,7 @@ def astar_field_placement(delivery_type, n_fielders=9):
     f(n)    : g(n) + h(n)  →  minimise
 
     Returns : list of dicts with fielder name, position, coverage score
-    """
+   """
     shot_probs = DELIVERY_ZONE_PROBS.get(delivery_type, {})
     if not shot_probs:
         shot_probs = {z: ZONES[z]["risk"] for z in list(ZONES)[:6]}
