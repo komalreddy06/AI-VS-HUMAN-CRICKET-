@@ -1,5 +1,5 @@
 # 🏏 AI Cricket – Intelligence vs Human
-**2ND YEAR PROJECT | AI & Search Techniques**
+**2ND YEAR PROJECT | INTRODUCTION TO AI PROJECT**
 
 ## Algorithms Implemented
 | serial | Algorithm | Game Role |
