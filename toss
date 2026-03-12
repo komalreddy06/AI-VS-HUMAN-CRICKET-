@@ -1,0 +1,262 @@
+"""
+=============================================================
+  AI VS HUMAN CRICKET - TOSS MODULE
+  Subject  : Introduction to Artificial Intelligence
+  Unit     : I  (Problem formulation, State-space, Search)
+  Concept  : State-space representation + Random / BFS decision
+  Role     : Determines batting/bowling order before 1-over match
+=============================================================
+
+TOSS as a Search / Decision Problem
+-------------------------------------
+  State    : { caller, coin_result, winner, choice }
+  Actions  : call(heads|tails)  →  flip()  →  choose(bat|bowl)
+  Transition: deterministic path through states (like BFS on a tiny graph)
+  AI Logic  : If AI wins toss → uses a weighted heuristic to decide
+              (batting first is preferred in short formats → weight 0.65)
+"""
+
+import random
+import time
+import sys
+
+
+# ─────────────────────────────────────────────
+#  CONSTANTS
+# ─────────────────────────────────────────────
+HEADS = "HEADS"
+TAILS = "TAILS"
+BAT   = "BAT"
+BOWL  = "BOWL"
+
+# AI preference weight: probability AI chooses to BAT when it wins toss
+# (In 1-over cricket, batting first to set a target is slightly preferred)
+AI_BAT_PREFERENCE = 0.65   # Unit-III style: probability / uncertainty
+
+
+# ─────────────────────────────────────────────
+#  HELPERS  – terminal styling (no libraries)
+# ─────────────────────────────────────────────
+def clr():
+    """Clear screen cross-platform."""
+    print("\033[2J\033[H", end="")
+
+def bold(text):   return f"\033[1m{text}\033[0m"
+def yellow(text): return f"\033[93m{text}\033[0m"
+def cyan(text):   return f"\033[96m{text}\033[0m"
+def green(text):  return f"\033[92m{text}\033[0m"
+def red(text):    return f"\033[91m{text}\033[0m"
+def dim(text):    return f"\033[2m{text}\033[0m"
+
+def slow_print(text, delay=0.03):
+    """Print character by character for dramatic effect."""
+    for ch in text:
+        sys.stdout.write(ch)
+        sys.stdout.flush()
+        time.sleep(delay)
+    print()
+
+def spinner(message, duration=2.0, frames="⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏"):
+    """Show a spinning loader for given duration."""
+    end_time = time.time() + duration
+    i = 0
+    while time.time() < end_time:
+        sys.stdout.write(f"\r  {yellow(frames[i % len(frames)])}  {message}  ")
+        sys.stdout.flush()
+        time.sleep(0.08)
+        i += 1
+    sys.stdout.write("\r" + " " * 50 + "\r")
+    sys.stdout.flush()
+
+
+# ─────────────────────────────────────────────
+#  BANNER
+# ─────────────────────────────────────────────
+BANNER = """
+{}
+{}
+{}
+{}
+{}
+{}
+""".format(
+    yellow("  ╔══════════════════════════════════════════════╗"),
+    yellow("  ║") + bold("     🏏  AI vs HUMAN CRICKET  –  THE TOSS     ") + yellow("║"),
+    yellow("  ║") + dim("         1 Over  ·  6 Balls  ·  T20 Rules     ") + yellow("║"),
+    yellow("  ╠══════════════════════════════════════════════╣"),
+    yellow("  ║") + "   👤 HUMAN  =  HEADS     🤖 AI  =  TAILS      " + yellow("║"),
+    yellow("  ╚══════════════════════════════════════════════╝"),
+)
+
+
+# ─────────────────────────────────────────────
+#  COIN FLIP  –  pure random (Unit-III: uncertainty)
+# ─────────────────────────────────────────────
+def flip_coin() -> str:
+    """
+    Simulate a fair coin flip.
+    Returns 'HEADS' or 'TAILS'.
+    Represents uncertainty / probabilistic outcome (Unit-III theme).
+    """
+    return random.choice([HEADS, TAILS])
+
+
+# ─────────────────────────────────────────────
+#  AI DECISION  –  weighted heuristic (Unit-I: heuristics)
+# ─────────────────────────────────────────────
+def ai_choose_innings() -> str:
+    """
+    AI decides to BAT or BOWL when it wins the toss.
+
+    Heuristic (Unit-I: evaluation functions):
+      h(BAT)  = 0.65  — setting a target is preferred in short formats
+      h(BOWL) = 0.35  — chasing is riskier with only 6 balls
+
+    Returns 'BAT' or 'BOWL'.
+    """
+    return BAT if random.random() < AI_BAT_PREFERENCE else BOWL
+
+
+# ─────────────────────────────────────────────
+#  TOSS STATE MACHINE
+#  State-space (Unit-I): each dict is a node in the decision path
+#  START → CALLED → FLIPPED → DECIDED → DONE
+# ─────────────────────────────────────────────
+def run_toss() -> dict:
+    """
+    Run the full toss interaction.
+
+    State representation:
+        state = {
+            'human_call'   : HEADS | TAILS,
+            'coin_result'  : HEADS | TAILS,
+            'toss_winner'  : 'human' | 'ai',
+            'human_choice' : BAT | BOWL,
+            'ai_choice'    : BAT | BOWL,
+        }
+
+    Returns the final state dict for the match engine to consume.
+    """
+    clr()
+    print(BANNER)
+
+    # ── STATE 0: START ──────────────────────────────────
+    slow_print(cyan("  The umpire is ready. Step forward for the toss!\n"), 0.02)
+
+    # ── STATE 1: HUMAN CALLS ────────────────────────────
+    while True:
+        print("  " + bold("Your call before the coin is tossed:"))
+        print("    " + yellow("[1]") + "  HEADS  (You)")
+        print("    " + yellow("[2]") + "  TAILS  (AI)")
+        call_input = input("\n  Enter 1 or 2 : ").strip()
+        if call_input == "1":
+            human_call = HEADS
+            break
+        elif call_input == "2":
+            human_call = TAILS
+            break
+        else:
+            print(red("  Invalid input. Please enter 1 or 2.\n"))
+
+    slow_print(f"\n  You called  →  {bold(yellow(human_call))}", 0.025)
+
+    # ── STATE 2: COIN FLIP ──────────────────────────────
+    print()
+    spinner("Tossing the coin ...", duration=2.2)
+
+    coin_result = flip_coin()
+
+    # Coin animation frames
+    frames = ["  ( H )", "  ( | )", "  ( T )", "  ( | )", "  ( H )", "  ( T )"]
+    for f in frames:
+        sys.stdout.write(f"\r{yellow(f)}  ")
+        sys.stdout.flush()
+        time.sleep(0.18)
+    print("\n")
+
+    slow_print(f"  The coin shows  →  {bold(green(coin_result))}  !", 0.03)
+    time.sleep(0.6)
+
+    # ── STATE 3: DETERMINE WINNER ───────────────────────
+    toss_winner = "human" if coin_result == human_call else "ai"
+
+    print()
+    if toss_winner == "human":
+        slow_print(green("  🎉  YOU WIN THE TOSS!\n"), 0.02)
+    else:
+        slow_print(red("  🤖  AI WINS THE TOSS!\n"), 0.02)
+    time.sleep(0.4)
+
+    # ── STATE 4: INNINGS CHOICE ─────────────────────────
+    if toss_winner == "human":
+        while True:
+            print("  " + bold("You won — choose your innings:"))
+            print("    " + yellow("[1]") + "  BAT first   (set a target)")
+            print("    " + yellow("[2]") + "  BOWL first  (defend / chase)")
+            choice_input = input("\n  Enter 1 or 2 : ").strip()
+            if choice_input == "1":
+                human_choice = BAT
+                break
+            elif choice_input == "2":
+                human_choice = BOWL
+                break
+            else:
+                print(red("  Invalid input. Please enter 1 or 2.\n"))
+
+        ai_choice = BOWL if human_choice == BAT else BAT
+
+    else:
+        # AI decides using weighted heuristic
+        spinner("AI is deciding ...", duration=1.5)
+        ai_choice    = ai_choose_innings()
+        human_choice = BOWL if ai_choice == BAT else BAT
+        slow_print(
+            f"  🤖  AI chose to  {bold(cyan(ai_choice))} first  "
+            f"{dim('(heuristic: batting preferred in short formats)')}\n",
+            0.02,
+        )
+
+    # ── STATE 5: FINAL SUMMARY ──────────────────────────
+    time.sleep(0.4)
+    print()
+    print(yellow("  ╔══════════════════════════════════════════════╗"))
+    print(yellow("  ║") + bold("              TOSS RESULT SUMMARY              ") + yellow("║"))
+    print(yellow("  ╠══════════════════════════════════════════════╣"))
+    print(yellow("  ║") + f"   Coin Result   :  {bold(coin_result):<30}" + yellow("║"))
+    print(yellow("  ║") + f"   Toss Winner   :  {bold(toss_winner.upper()):<30}" + yellow("║"))
+    print(yellow("  ╠══════════════════════════════════════════════╣"))
+    print(yellow("  ║") + f"   👤 HUMAN      :  {bold(green(human_choice + ' FIRST')):<39}" + yellow("║"))
+    print(yellow("  ║") + f"   🤖 AI         :  {bold(cyan(ai_choice + ' FIRST')):<39}" + yellow("║"))
+    print(yellow("  ╠══════════════════════════════════════════════╣"))
+    print(yellow("  ║") + dim("   Format : 1 Over  ·  6 Balls  ·  T20 Rules   ") + yellow("║"))
+    print(yellow("  ╚══════════════════════════════════════════════╝"))
+    print()
+
+    # Build and return final state
+    state = {
+        "human_call"   : human_call,
+        "coin_result"  : coin_result,
+        "toss_winner"  : toss_winner,
+        "human_choice" : human_choice,   # BAT or BOWL
+        "ai_choice"    : ai_choice,      # BAT or BOWL
+        "overs"        : 1,
+    }
+
+    slow_print(cyan("  Toss complete. Preparing the pitch ...\n"), 0.02)
+    time.sleep(0.8)
+    return state
+
+
+# ─────────────────────────────────────────────
+#  ENTRY POINT  (can also be imported as module)
+# ─────────────────────────────────────────────
+if __name__ == "__main__":
+    result = run_toss()
+
+    # Show what the match engine will receive
+    print(dim("  [DEBUG] State passed to match engine:"))
+    for k, v in result.items():
+        print(dim(f"    {k:<15} : {v}"))
+    print()
+
+    input(yellow("  Press ENTER to start the match → "))
